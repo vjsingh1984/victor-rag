@@ -12,20 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Enhanced safety integration for victor-rag using SafetyCoordinator."""
+"""Enhanced safety integration for victor-rag using framework safety capabilities."""
 
 from __future__ import annotations
 
 import logging
 from typing import Any, Dict, List, Optional
 
-from victor.agent.coordinators.safety_coordinator import (
+from victor.framework.capabilities.safety_rules import (
     SafetyAction,
     SafetyCategory,
-    SafetyCoordinator,
     SafetyRule,
 )
 from victor.core.verticals.protocols import SafetyExtensionProtocol, SafetyPattern
+
+# NOTE: SafetyCoordinator is now internal to victor.agent
+# External verticals should use SafetyExtensionProtocol and SafetyRule patterns
+# The framework will handle rule evaluation and coordination
 
 logger = logging.getLogger(__name__)
 
@@ -67,34 +70,44 @@ class RAGSafetyRules:
 
 
 class EnhancedRAGSafetyExtension(SafetyExtensionProtocol):
-    """Enhanced safety extension for RAG."""
+    """Enhanced safety extension for RAG using framework capabilities."""
 
     def __init__(self, strict_mode: bool = False):
-        self._coordinator = SafetyCoordinator(strict_mode=strict_mode)
+        from victor.framework.capabilities.safety_rules import SafetyRulesCapabilityProvider
+
+        self._provider = SafetyRulesCapabilityProvider(strict_mode=strict_mode)
+        # Register custom RAG-specific rules
         for rule in RAGSafetyRules.get_all_rules():
-            self._coordinator.register_rule(rule)
-        logger.info(f"EnhancedRAGSafetyExtension initialized")
+            self._provider.add_custom_rule(rule)
+        logger.info("EnhancedRAGSafetyExtension initialized")
 
     def check_operation(self, tool_name: str, args: List[str], context: Optional[Dict[str, Any]] = None) -> Any:
-        return self._coordinator.check_safety(tool_name, args, context)
+        """Check operation safety using framework provider."""
+        return self._provider.check_operation(tool_name, args, context)
 
     def is_operation_safe(self, tool_name: str, args: List[str], context: Optional[Dict[str, Any]] = None) -> bool:
-        return self._coordinator.is_operation_safe(tool_name, args, context)
+        """Check if operation is safe using framework provider."""
+        return self._provider.is_operation_safe(tool_name, args, context)
 
     def get_bash_patterns(self) -> List[SafetyPattern]:
+        """Get bash safety patterns."""
         return []
 
     def get_file_patterns(self) -> List[SafetyPattern]:
+        """Get file safety patterns."""
         return []
 
     def get_tool_restrictions(self) -> Dict[str, List[str]]:
+        """Get tool restrictions."""
         return {}
 
-    def get_coordinator(self) -> SafetyCoordinator:
-        return self._coordinator
+    def get_provider(self):
+        """Get the framework safety rules provider."""
+        return self._provider
 
     def get_safety_stats(self) -> Dict[str, Any]:
-        return self._coordinator.get_stats_dict()
+        """Get safety statistics."""
+        return {"strict_mode": self._provider.strict_mode, "custom_rules": len(RAGSafetyRules.get_all_rules())}
 
 
 __all__ = ["RAGSafetyRules", "EnhancedRAGSafetyExtension"]

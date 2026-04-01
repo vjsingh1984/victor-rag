@@ -12,7 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Enhanced conversation management for victor-rag."""
+"""Enhanced conversation management for victor-rag.
+
+NOTE: This module uses internal ConversationCoordinator from victor.agent.coordinators.
+This is an internal API and should be refactored to use framework-level protocols
+when available. For now, this is an accepted internal dependency.
+"""
 
 from __future__ import annotations
 
@@ -20,6 +25,8 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
+# INTERNAL API: ConversationCoordinator is internal to victor.agent
+# TODO: Refactor to use framework-level conversation protocols
 from victor.agent.coordinators.conversation_coordinator import (
     ConversationCoordinator,
     ConversationStats,

@@ -30,6 +30,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, Type
 
 from victor.core.verticals.base import StageDefinition, VerticalBase, VerticalConfig
+from victor.core.verticals.registration import register_vertical
 from victor.core.verticals.protocols import (
     MiddlewareProtocol,
     SafetyExtensionProtocol,
@@ -42,6 +43,16 @@ from victor.core.verticals.protocols import (
 from victor.framework.tool_naming import ToolNames
 
 
+@register_vertical(
+    name="rag",
+    version="1.0.0",
+    min_framework_version=">=0.6.0",
+    canonicalize_tool_names=False,  # RAG has custom tool names
+    tool_dependency_strategy="auto",
+    strict_mode=False,
+    load_priority=80,
+    plugin_namespace="default",
+)
 class RAGAssistant(VerticalBase):
     """Retrieval-Augmented Generation assistant vertical.
 

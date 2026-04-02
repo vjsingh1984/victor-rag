@@ -24,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
           # Clone and install main victor framework from git to get latest coordinators
-          git clone https://github.com/vjsingh1984/victor.git /tmp/victor-framework
+          git clone --branch develop https://github.com/vjsingh1984/victor.git /tmp/victor-framework
           pip install -e /tmp/victor-framework
       
       - name: Run tests

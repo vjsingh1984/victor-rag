@@ -42,17 +42,17 @@ import logging
 from copy import deepcopy
 from typing import Any, Callable, Dict, List, Optional, Set, TYPE_CHECKING
 
-from victor_sdk import CapabilityType, OrchestratorCapability
-from victor.framework.capability_loader import CapabilityEntry, capability
-from victor.framework.capability_config_helpers import (
+from victor_contracts import CapabilityType, OrchestratorCapability
+from victor_contracts.capabilities import CapabilityEntry, capability
+from victor_contracts.capabilities import (
     load_capability_config,
     store_capability_config,
     update_capability_config_section,
 )
-from victor_sdk import BaseCapabilityProvider, CapabilityMetadata
+from victor_contracts import BaseCapabilityProvider, CapabilityMetadata
 
 if TYPE_CHECKING:
-    from victor_sdk.protocols import OrchestratorProtocol as AgentOrchestrator
+    from victor_contracts.protocols import OrchestratorProtocol as AgentOrchestrator
 
 logger = logging.getLogger(__name__)
 
@@ -720,20 +720,12 @@ def create_rag_capability_loader() -> Any:
     Returns:
         CapabilityLoader with RAG capabilities registered
     """
-    from victor.framework import CapabilityLoader
+    from victor_contracts.capabilities import create_runtime_capability_loader
 
-    loader = CapabilityLoader()
-
-    # Register all RAG capabilities
-    for entry in CAPABILITIES:
-        loader._register_capability_internal(
-            capability=entry.capability,
-            handler=entry.handler,
-            getter_handler=entry.getter_handler,
-            source_module="victor_rag.capabilities",
-        )
-
-    return loader
+    return create_runtime_capability_loader(
+        CAPABILITIES,
+        source_module="victor_rag.capabilities",
+    )
 
 
 # =============================================================================

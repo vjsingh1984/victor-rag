@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **This repository has moved into the Victor monorepo.**
+> `victor-rag` is now developed at [vjsingh1984/victor](https://github.com/vjsingh1984/victor) under `verticals/victor-rag/`.
+> This repo is archived (read-only); open issues and PRs against the monorepo.
+
 # victor-rag
 
 **RAG (Retrieval-Augmented Generation) Vertical for Victor AI**
